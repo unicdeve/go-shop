@@ -8,10 +8,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Logger is the logger for the application
 type Logger struct {
 	Logger *zerolog.Logger
 }
 
+// New creates a new logger
 func New() zerolog.Logger {
 	zerolog.TimeFieldFormat = time.RFC3339
 

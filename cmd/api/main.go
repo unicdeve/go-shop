@@ -24,7 +24,13 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to get main database")
 	}
-	defer mainDB.Close()
+
+	defer func() {
+		if err := mainDB.Close(); err != nil {
+			log.Fatal().Err(err).Msg("failed to close main database")
+		}
+	}()
+
 	gin.SetMode(cfg.Server.GinMode)
 
 	log.Info().Msg("Staring API server")

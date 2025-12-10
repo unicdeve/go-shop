@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Category is the model for the category
 type Category struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	Name        string         `json:"name" gorm:"not null"`
@@ -19,6 +20,7 @@ type Category struct {
 	Products []Product `json:"-"`
 }
 
+// Product is the model for the product
 type Product struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	CategoryID  uint           `json:"category_id" gorm:"not null"`
@@ -39,6 +41,7 @@ type Product struct {
 	CartItems  []CartItem     `json:"-"`
 }
 
+// ProductImage is the model for the product image
 type ProductImage struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	ProductID uint           `json:"product_id" gorm:"not null"`

@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// User is the model for the user
 type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	Email     string         `json:"email" gorm:"uniqueIndex;not null"`
@@ -25,13 +26,16 @@ type User struct {
 	Cart          Cart           `json:"-"`
 }
 
+// UserRole is the role of the user
 type UserRole string
 
+// UserRole enums
 const (
-	UserRoleCustomer UserRole = "customer"
-	UserRoleAdmin    UserRole = "admin"
+	UserRoleCustomer UserRole = "customer" // The user is a customer
+	UserRoleAdmin    UserRole = "admin"    // The user is an admin
 )
 
+// RefreshToken is the model for the refresh token
 type RefreshToken struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	UserID    uint           `json:"user_id" gorm:"not null"`

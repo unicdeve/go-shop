@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config is the main configuration for the application
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
@@ -16,11 +17,13 @@ type Config struct {
 	Upload   UploadConfig
 }
 
+// ServerConfig is the configuration for the server
 type ServerConfig struct {
 	Port    string
 	GinMode string
 }
 
+// DatabaseConfig is the configuration for the database
 type DatabaseConfig struct {
 	Host     string
 	Port     string
@@ -30,12 +33,14 @@ type DatabaseConfig struct {
 	SSLMode  string
 }
 
+// JWTConfig is the configuration for the JWT
 type JWTConfig struct {
 	Secret           string
 	ExpiresIn        time.Duration
 	RefreshExpiresIn time.Duration
 }
 
+// AWSConfig is the configuration for the AWS
 type AWSConfig struct {
 	Region          string
 	AccessKeyID     string
@@ -45,18 +50,20 @@ type AWSConfig struct {
 	S3Region        string
 }
 
+// UploadConfig is the configuration for the upload
 type UploadConfig struct {
 	Path        string
 	MaxFileSize int64
 }
 
-func getEnv(key string, defaultValue string) string {
+func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
 	return defaultValue
 }
 
+// LoadConfig loads the configuration from the environment variables
 func LoadConfig() (*Config, error) {
 	_ = godotenv.Load()
 
