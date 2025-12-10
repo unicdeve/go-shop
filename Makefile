@@ -18,7 +18,7 @@ build:
 	go build -o bin/api cmd/api/main.go
 
 run:
-	bin/api
+	go run cmd/api/main.go
 
 dev:
 	go run cmd/api/main.go

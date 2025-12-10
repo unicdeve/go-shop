@@ -1,0 +1,98 @@
+package config
+
+import (
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/joho/godotenv"
+)
+
+type Config struct {
+	Server   ServerConfig
+	Database DatabaseConfig
+	JWT      JWTConfig
+	AWS      AWSConfig
+	Upload   UploadConfig
+}
+
+type ServerConfig struct {
+	Port    string
+	GinMode string
+}
+
+type DatabaseConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Name     string
+	SSLMode  string
+}
+
+type JWTConfig struct {
+	Secret           string
+	ExpiresIn        time.Duration
+	RefreshExpiresIn time.Duration
+}
+
+type AWSConfig struct {
+	Region          string
+	AccessKeyID     string
+	SecretAccessKey string
+	S3Bucket        string
+	S3Endpoint      string
+	S3Region        string
+}
+
+type UploadConfig struct {
+	Path        string
+	MaxFileSize int64
+}
+
+func getEnv(key string, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func LoadConfig() (*Config, error) {
+	_ = godotenv.Load()
+
+	jwtExpiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "24h"))
+	jwtRefreshExpiresIn, _ := time.ParseDuration(getEnv("JWT_REFRESH_EXPIRES_IN", "720h"))
+	maxUploadSize, _ := strconv.ParseInt(getEnv("MAX_UPLOAD_SIZE", "1024000"), 10, 64)
+
+	return &Config{
+		Server: ServerConfig{
+			Port:    getEnv("SERVER_PORT", "8080"),
+			GinMode: getEnv("GIN_MODE", "debug"),
+		},
+		Database: DatabaseConfig{
+			Host:     getEnv("DB_HOST", "localhost"),
+			Port:     getEnv("DB_PORT", "5432"),
+			User:     getEnv("DB_USER", "postgres"),
+			Password: getEnv("DB_PASSWORD", "password"),
+			Name:     getEnv("DB_NAME", "go_shop"),
+			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		},
+		JWT: JWTConfig{
+			Secret:           getEnv("JWT_SECRET", "secret"),
+			ExpiresIn:        jwtExpiresIn,
+			RefreshExpiresIn: jwtRefreshExpiresIn,
+		},
+		AWS: AWSConfig{
+			Region:          getEnv("AWS_REGION", "us-east-1"),
+			AccessKeyID:     getEnv("AWS_ACCESS_KEY_ID", "test"),
+			SecretAccessKey: getEnv("AWS_SECRET_ACCESS_KEY", "test"),
+			S3Bucket:        getEnv("AWS_S3_BUCKET", "go_shop"),
+			S3Endpoint:      getEnv("AWS_S3_ENDPOINT", "http://localhost:4566"),
+			S3Region:        getEnv("AWS_S3_REGION", "us-east-1"),
+		},
+		Upload: UploadConfig{
+			Path:        getEnv("UPLOAD_PATH", "uploads"),
+			MaxFileSize: maxUploadSize,
+		},
+	}, nil
+}
