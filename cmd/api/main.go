@@ -1,10 +1,18 @@
 package main
 
 import (
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/database"
 	"github.com/unicdev/go-shop/internal/logger"
+	"github.com/unicdev/go-shop/internal/server"
 )
 
 func main() {
@@ -33,5 +41,34 @@ func main() {
 
 	gin.SetMode(cfg.Server.GinMode)
 
-	log.Info().Msg("Staring API server")
+	srv := server.New(cfg, db, &log)
+	router := srv.SetupRoutes()
+
+	httpServer := &http.Server{
+		Addr:         ":" + cfg.Server.Port,
+		Handler:      router,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  10 * time.Second,
+	}
+
+	go func() {
+		log.Info().Str("port", cfg.Server.Port).Msg("Starting HTTP server")
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal().Err(err).Msg("failed to start HTTP server")
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Info().Msg("Shutting down API server")
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(ctx); err != nil {
+		log.Fatal().Err(err).Msg("failed to shutdown HTTP server")
+	}
+	log.Info().Msg("API server shutdown successfully")
 }
