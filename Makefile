@@ -32,10 +32,10 @@ format:
 	@goimports -w .
 
 migrate-up:
-	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5432/go-shop?sslmode=disable" up
+	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5434/go_shop?sslmode=disable" up
 
 migrate-down:
-	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5432/go-shop?sslmode=disable" down
+	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5434/go_shop?sslmode=disable" down
 
 migrate-create:
 	migrate create -ext sql -dir db/migrations -seq $(name)
