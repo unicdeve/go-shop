@@ -16,8 +16,8 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-// GenerateJWT generates a new JWT
-func GenerateJWT(cfg *config.JWTConfig, userID uint, email, role string) (accessToken, refreshToken string, err error) {
+// GenerateTokenPair generates a new JWT
+func GenerateTokenPair(cfg *config.JWTConfig, userID uint, email, role string) (accessToken, refreshToken string, err error) {
 	accessClaims := &Claims{
 		UserID: userID,
 		Role:   role,
