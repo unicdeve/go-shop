@@ -17,15 +17,15 @@ type Response struct {
 // PaginatedResponse is the response for the paginated API
 type PaginatedResponse struct {
 	Response
-	Meta PaginatedMeta `json:"meta"`
+	Meta PaginationMeta `json:"meta"`
 }
 
-// PaginatedMeta is the meta for the paginated response
-type PaginatedMeta struct {
-	Total      int `json:"total"`
-	Page       int `json:"page"`
-	Limit      int `json:"limit"`
-	TotalPages int `json:"total_pages"`
+// PaginationMeta is the meta for the paginated response
+type PaginationMeta struct {
+	Total      int64 `json:"total"`
+	Page       int   `json:"page"`
+	Limit      int   `json:"limit"`
+	TotalPages int   `json:"total_pages"`
 }
 
 // SuccessResponse is the response for the success API
@@ -85,7 +85,7 @@ func InternalServerErrorResponse(c *gin.Context, message string, err error) {
 }
 
 // PaginatedSuccessResponse is the response for the paginated success API
-func PaginatedSuccessResponse(c *gin.Context, message string, data interface{}, meta PaginatedMeta) {
+func PaginatedSuccessResponse(c *gin.Context, message string, data interface{}, meta PaginationMeta) {
 	c.JSON(http.StatusOK, PaginatedResponse{
 		Response: Response{
 			Success: true,
