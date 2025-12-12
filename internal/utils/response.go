@@ -70,13 +70,13 @@ func BadRequestResponse(c *gin.Context, message string, err error) {
 }
 
 // UnauthorizedResponse is the response for the unauthorized API
-func UnauthorizedResponse(c *gin.Context, message string, err error) {
-	ErrorResponse(c, http.StatusUnauthorized, message, err)
+func UnauthorizedResponse(c *gin.Context, message string) {
+	ErrorResponse(c, http.StatusUnauthorized, message, nil)
 }
 
 // ForbiddenResponse is the response for the forbidden API
-func ForbiddenResponse(c *gin.Context, message string, err error) {
-	ErrorResponse(c, http.StatusForbidden, message, err)
+func ForbiddenResponse(c *gin.Context, message string) {
+	ErrorResponse(c, http.StatusForbidden, message, nil)
 }
 
 // InternalServerErrorResponse is the response for the internal server error API
