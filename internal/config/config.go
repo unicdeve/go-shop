@@ -52,8 +52,9 @@ type AWSConfig struct {
 
 // UploadConfig is the configuration for the upload
 type UploadConfig struct {
-	Path        string
-	MaxFileSize int64
+	UploadProvider string
+	Path           string
+	MaxFileSize    int64
 }
 
 func getEnv(key, defaultValue string) string {
@@ -98,8 +99,9 @@ func LoadConfig() (*Config, error) {
 			S3Region:        getEnv("AWS_S3_REGION", "us-east-1"),
 		},
 		Upload: UploadConfig{
-			Path:        getEnv("UPLOAD_PATH", "uploads"),
-			MaxFileSize: maxUploadSize,
+			UploadProvider: getEnv("UPLOAD_PROVIDER", "local"),
+			Path:           getEnv("UPLOAD_PATH", "uploads"),
+			MaxFileSize:    maxUploadSize,
 		},
 	}, nil
 }
