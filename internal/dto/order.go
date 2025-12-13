@@ -1,7 +1,5 @@
 package dto
 
-import "time"
-
 // AddToCartRequest is the request for the add to cart API
 type AddToCartRequest struct {
 	ProductID uint `json:"product_id" binding:"required"`
@@ -19,18 +17,14 @@ type CartResponse struct {
 	UserID    uint               `json:"user_id"`
 	CartItems []CartItemResponse `json:"cart_items"`
 	Total     float64            `json:"total"`
-	CreatedAt time.Time          `json:"created_at"`
-	UpdatedAt time.Time          `json:"updated_at"`
 }
 
 // CartItemResponse is the response for the cart item API
 type CartItemResponse struct {
-	ID        uint            `json:"id"`
-	Product   ProductResponse `json:"product"`
-	Quantity  int             `json:"quantity"`
-	Subtotal  float64         `json:"subtotal"`
-	CreatedAt time.Time       `json:"created_at"`
-	UpdatedAt time.Time       `json:"updated_at"`
+	ID       uint            `json:"id"`
+	Product  ProductResponse `json:"product"`
+	Quantity int             `json:"quantity"`
+	Subtotal float64         `json:"subtotal"`
 }
 
 // OrderResponse is the response for the order API
@@ -40,15 +34,13 @@ type OrderResponse struct {
 	Status      string              `json:"status"`
 	TotalAmount float64             `json:"total_amount"`
 	OrderItems  []OrderItemResponse `json:"order_items"`
-	CreatedAt   time.Time           `json:"created_at"`
-	UpdatedAt   time.Time           `json:"updated_at"`
+	CreatedAt   string              `json:"created_at"`
 }
 
 // OrderItemResponse is the response for the order item API
 type OrderItemResponse struct {
-	ID        uint            `json:"id"`
-	Product   ProductResponse `json:"product"`
-	Quantity  int             `json:"quantity"`
-	Price     float64         `json:"price"`
-	CreatedAt time.Time       `json:"created_at"`
+	ID       uint            `json:"id"`
+	Product  ProductResponse `json:"product"`
+	Quantity int             `json:"quantity"`
+	Price    float64         `json:"price"`
 }
