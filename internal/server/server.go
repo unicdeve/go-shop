@@ -6,22 +6,35 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/unicdev/go-shop/internal/config"
+	"github.com/unicdev/go-shop/internal/services"
 	"gorm.io/gorm"
 )
 
 // Server is the server for the application
 type Server struct {
-	config *config.Config
-	db     *gorm.DB
-	logger *zerolog.Logger
+	config         *config.Config
+	db             *gorm.DB
+	logger         *zerolog.Logger
+	authService    *services.AuthService
+	productService *services.ProductService
+	userService    *services.UserService
 }
 
 // New creates a new server
-func New(cfg *config.Config, db *gorm.DB, logger *zerolog.Logger) *Server {
+func New(cfg *config.Config,
+	db *gorm.DB,
+	logger *zerolog.Logger,
+	authService *services.AuthService,
+	productService *services.ProductService,
+	userService *services.UserService,
+) *Server {
 	return &Server{
-		config: cfg,
-		db:     db,
-		logger: logger,
+		config:         cfg,
+		db:             db,
+		logger:         logger,
+		authService:    authService,
+		productService: productService,
+		userService:    userService,
 	}
 }
 
