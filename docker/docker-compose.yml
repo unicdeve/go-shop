@@ -17,15 +17,15 @@ services:
       timeout: 5s
       retries: 5
 
-  # cdn:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "8081:80"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #     - ../uploads:/var/www/uploads
-  #   depends_on:
-  #     - localstack
+  cdn:
+    image: nginx:alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../uploads:/var/www/uploads
+    depends_on:
+      - localstack
 
   # mailpit:
   #   image: axllent/mailpit:v1.27
