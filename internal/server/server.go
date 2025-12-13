@@ -18,6 +18,7 @@ type Server struct {
 	authService    *services.AuthService
 	productService *services.ProductService
 	userService    *services.UserService
+	uploadService  *services.UploadService
 }
 
 // New creates a new server
@@ -27,6 +28,7 @@ func New(cfg *config.Config,
 	authService *services.AuthService,
 	productService *services.ProductService,
 	userService *services.UserService,
+	uploadService *services.UploadService,
 ) *Server {
 	return &Server{
 		config:         cfg,
@@ -35,6 +37,7 @@ func New(cfg *config.Config,
 		authService:    authService,
 		productService: productService,
 		userService:    userService,
+		uploadService:  uploadService,
 	}
 }
 
@@ -88,6 +91,7 @@ func (s *Server) SetupRoutes() *gin.Engine {
 				productRoutes.POST("/", s.adminMiddleware(), s.createProduct)
 				productRoutes.PUT("/:id", s.adminMiddleware(), s.updateProduct)
 				productRoutes.DELETE("/:id", s.adminMiddleware(), s.deleteProduct)
+				productRoutes.POST("/:id/images", s.adminMiddleware(), s.uploadProductImage)
 			}
 		}
 
