@@ -7,23 +7,29 @@ import (
 
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/dto"
+	"github.com/unicdev/go-shop/internal/events"
 	"github.com/unicdev/go-shop/internal/models"
 	"github.com/unicdev/go-shop/internal/utils"
 	"gorm.io/gorm"
 )
 
+// AuthService is the service for the auth
 type AuthService struct {
-	db     *gorm.DB
-	config *config.Config
+	db             *gorm.DB
+	config         *config.Config
+	eventPublisher events.Publisher
 }
 
-func NewAuthService(db *gorm.DB, config *config.Config) *AuthService {
+// NewAuthService creates a new auth service
+func NewAuthService(db *gorm.DB, config *config.Config, eventPublisher events.Publisher) *AuthService {
 	return &AuthService{
-		db:     db,
-		config: config,
+		db:             db,
+		config:         config,
+		eventPublisher: eventPublisher,
 	}
 }
 
+// Register registers a new user
 func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, error) {
 	// Check if user exists
 	var existingUser models.User
@@ -59,6 +65,7 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 
 }
 
+// Login logs in a user
 func (s *AuthService) Login(req *dto.LoginRequest) (*dto.AuthResponse, error) {
 	var user models.User
 	if err := s.db.Where("email = ? AND is_active = ?", req.Email, true).First(&user).Error; err != nil {
@@ -72,6 +79,7 @@ func (s *AuthService) Login(req *dto.LoginRequest) (*dto.AuthResponse, error) {
 	return s.generateAuthResponse(&user)
 }
 
+// RefreshToken refreshes a token
 func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthResponse, error) {
 	claims, err := utils.ValidateToken(req.RefreshToken, s.config.JWT.Secret)
 	if err != nil {
@@ -93,10 +101,12 @@ func (s *AuthService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.AuthRespo
 	return s.generateAuthResponse(&user)
 }
 
+// Logout logs out a user
 func (s *AuthService) Logout(refreshToken string) error {
 	return s.db.Where("token = ?", refreshToken).Delete(&models.RefreshToken{}).Error
 }
 
+// generateAuthResponse generates an auth response
 func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse, error) {
 	accessToken, refreshToken, err := utils.GenerateTokenPair(
 		&s.config.JWT,
@@ -115,6 +125,15 @@ func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse
 	}
 
 	s.db.Create(&refreshTokenModel)
+
+	err = s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{
+		"user_id": fmt.Sprintf("%d", user.ID),
+		"email":   user.Email,
+		"role":    string(user.Role),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to publish user logged in event: %w", err)
+	}
 
 	return &dto.AuthResponse{
 		User: dto.UserResponse{

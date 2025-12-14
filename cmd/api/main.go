@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/database"
+	"github.com/unicdev/go-shop/internal/events"
 	"github.com/unicdev/go-shop/internal/interfaces"
 	"github.com/unicdev/go-shop/internal/logger"
 	"github.com/unicdev/go-shop/internal/providers"
@@ -64,7 +65,13 @@ func main() {
 
 	gin.SetMode(cfg.Server.GinMode)
 
-	authService := services.NewAuthService(db, cfg)
+	eventPublisher, err := events.NewEventPublisher(context.Background(), &cfg.AWS)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create event publisher")
+		return
+	}
+
+	authService := services.NewAuthService(db, cfg, eventPublisher)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
 
