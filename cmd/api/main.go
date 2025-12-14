@@ -18,6 +18,26 @@ import (
 	"github.com/unicdev/go-shop/internal/services"
 )
 
+// @title Go-Shop API
+// @version 1.0
+// @description A modern e-commerce API built with Go, Gin, and GORM
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name   Taiwo Ogunola
+// @contact.url    http://linkedin.com/in/taiwoogunola
+// @contact.email  no-email@no-email
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemas http https
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	log := logger.New()
 

@@ -31,6 +31,10 @@ format:
 	@gofmt -s -w .
 	@goimports -w .
 
+docs-generate:
+	mkdir -p docs
+	swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal --exclude .git,docs,docker,db
+
 migrate-up:
 	migrate -path db/migrations -database "postgresql://postgres:password@localhost:5434/go_shop?sslmode=disable" up
 

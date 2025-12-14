@@ -1,0 +1,247 @@
+basePath: /api/v1
+definitions:
+  github_com_unicdev_go-shop_internal_dto.CategoryResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_unicdev_go-shop_internal_dto.OrderItemResponse:
+    properties:
+      id:
+        type: integer
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.ProductResponse'
+      quantity:
+        type: integer
+    type: object
+  github_com_unicdev_go-shop_internal_dto.OrderResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      order_items:
+        items:
+          $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.OrderItemResponse'
+        type: array
+      status:
+        type: string
+      total_amount:
+        type: number
+      user_id:
+        type: integer
+    type: object
+  github_com_unicdev_go-shop_internal_dto.ProductImageResponse:
+    properties:
+      alt_text:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_primary:
+        type: boolean
+      url:
+        type: string
+    type: object
+  github_com_unicdev_go-shop_internal_dto.ProductResponse:
+    properties:
+      category:
+        $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.CategoryResponse'
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.ProductImageResponse'
+        type: array
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      sku:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  github_com_unicdev_go-shop_internal_utils.PaginatedResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      meta:
+        $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.PaginationMeta'
+      success:
+        type: boolean
+    type: object
+  github_com_unicdev_go-shop_internal_utils.PaginationMeta:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  github_com_unicdev_go-shop_internal_utils.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: no-email@no-email
+    name: Taiwo Ogunola
+    url: http://linkedin.com/in/taiwoogunola
+  description: A modern e-commerce API built with Go, Gin, and GORM
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Go-Shop API
+  version: "1.0"
+paths:
+  /orders:
+    get:
+      description: Retrieve paginated list of user's orders
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.OrderResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user's orders
+      tags:
+      - Orders
+    post:
+      description: Create an order from the current user's cart
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Order created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.OrderResponse'
+              type: object
+        "400":
+          description: Cart is empty or insufficient stock
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create an order
+      tags:
+      - Orders
+  /orders/{id}:
+    get:
+      description: Retrieve detailed information about a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_unicdev_go-shop_internal_dto.OrderResponse'
+              type: object
+        "400":
+          description: Invalid order ID
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+        "404":
+          description: Order not found
+          schema:
+            $ref: '#/definitions/github_com_unicdev_go-shop_internal_utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get order by ID
+      tags:
+      - Orders
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

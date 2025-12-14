@@ -5,9 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	_ "github.com/unicdev/go-shop/docs"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/services"
 	"gorm.io/gorm"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Server is the server for the application
@@ -58,6 +62,11 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	// Add routes
 	router.GET("/health", s.healthHandler)
+
+	// Add documentation routes
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router.StaticFile("/api-docs", "./docs/rapidoc.html")
 
 	api := router.Group("/api/v1")
 	{
