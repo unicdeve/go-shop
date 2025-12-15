@@ -706,6 +706,19 @@ paths:
       summary: Update a category
       tags:
       - Categories
+  /health:
+    get:
+      description: Health check endpoint
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check endpoint
   /orders:
     get:
       description: Retrieve paginated list of user's orders

@@ -60,12 +60,10 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(s.corsMiddleware())
 
-	// Add routes
 	router.GET("/health", s.healthHandler)
 
 	// Add documentation routes
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	router.StaticFile("/api-docs", "./docs/rapidoc.html")
 
 	api := router.Group("/api/v1")
@@ -151,6 +149,12 @@ func (s *Server) corsMiddleware() gin.HandlerFunc {
 	}
 }
 
+// Health check endpoint
+// @Summary Health check endpoint
+// @Description Health check endpoint
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func (s *Server) healthHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }
