@@ -15,6 +15,7 @@ type Config struct {
 	JWT      JWTConfig
 	AWS      AWSConfig
 	Upload   UploadConfig
+	SMTP     SMTPConfig
 }
 
 // ServerConfig is the configuration for the server
@@ -58,6 +59,15 @@ type UploadConfig struct {
 	MaxFileSize    int64
 }
 
+// SMTPConfig is the configuration for the SMTP server
+type SMTPConfig struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	From     string
+}
+
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -72,6 +82,7 @@ func LoadConfig() (*Config, error) {
 	jwtExpiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "24h"))
 	jwtRefreshExpiresIn, _ := time.ParseDuration(getEnv("JWT_REFRESH_EXPIRES_IN", "720h"))
 	maxUploadSize, _ := strconv.ParseInt(getEnv("MAX_UPLOAD_SIZE", "1024000"), 10, 64)
+	smtpPort, _ := strconv.Atoi(getEnv("SMTP_PORT", "1025"))
 
 	return &Config{
 		Server: ServerConfig{
@@ -104,6 +115,13 @@ func LoadConfig() (*Config, error) {
 			UploadProvider: getEnv("UPLOAD_PROVIDER", "local"),
 			Path:           getEnv("UPLOAD_PATH", "uploads"),
 			MaxFileSize:    maxUploadSize,
+		},
+		SMTP: SMTPConfig{
+			Host:     getEnv("SMTP_HOST", "localhost"),
+			Port:     smtpPort,
+			Username: getEnv("SMTP_USERNAME", ""),
+			Password: getEnv("SMTP_PASSWORD", ""),
+			From:     getEnv("SMTP_FROM", "noreply@example.com"),
 		},
 	}, nil
 }
