@@ -9,6 +9,7 @@ import (
 	"github.com/unicdev/go-shop/internal/dto"
 	"github.com/unicdev/go-shop/internal/events"
 	"github.com/unicdev/go-shop/internal/models"
+	"github.com/unicdev/go-shop/internal/notifications"
 	"github.com/unicdev/go-shop/internal/utils"
 	"gorm.io/gorm"
 )
@@ -126,7 +127,7 @@ func (s *AuthService) generateAuthResponse(user *models.User) (*dto.AuthResponse
 
 	s.db.Create(&refreshTokenModel)
 
-	err = s.eventPublisher.Publish("USER_LOGGED_IN", user, map[string]string{
+	err = s.eventPublisher.Publish(notifications.UserLoggedIn, user, map[string]string{
 		"user_id": fmt.Sprintf("%d", user.ID),
 		"email":   user.Email,
 		"role":    string(user.Role),

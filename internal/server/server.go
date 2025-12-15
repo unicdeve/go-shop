@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	_ "github.com/unicdev/go-shop/docs"
+	docs "github.com/unicdev/go-shop/docs"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/services"
 	"gorm.io/gorm"
@@ -63,6 +63,7 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	router.GET("/health", s.healthHandler)
 
 	// Add documentation routes
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.StaticFile("/api-docs", "./docs/rapidoc.html")
 
@@ -138,11 +139,12 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 func (s *Server) corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
 		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusNoContent)
+			c.AbortWithStatus(204)
 			return
 		}
 		c.Next()
