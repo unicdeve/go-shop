@@ -14,6 +14,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// AuthServiceInterface is the interface for the auth service
+var _ AuthServiceInterface = (*AuthService)(nil)
+
 // AuthService is the service for the auth
 type AuthService struct {
 	db             *gorm.DB

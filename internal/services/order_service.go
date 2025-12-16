@@ -10,6 +10,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// OrderServiceInterface is the interface for the order service
+var _ OrderServiceInterface = (*OrderService)(nil)
+
 // OrderService is the service for the order
 type OrderService struct {
 	db *gorm.DB

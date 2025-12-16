@@ -8,6 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// CartServiceInterface is the interface for the cart service
+var _ CartServiceInterface = (*CartService)(nil)
+
 // CartService is the service for the cart
 type CartService struct {
 	db *gorm.DB

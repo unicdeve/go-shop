@@ -6,6 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// UserServiceInterface is the interface for the user service
+var _ UserServiceInterface = (*UserService)(nil)
+
 // UserService is the service for the user
 type UserService struct {
 	db *gorm.DB

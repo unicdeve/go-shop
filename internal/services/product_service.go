@@ -7,6 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// ProductServiceInterface is the interface for the product service
+var _ ProductServiceInterface = (*ProductService)(nil)
+
 // ProductService is the service for the product
 type ProductService struct {
 	db *gorm.DB

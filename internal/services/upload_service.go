@@ -12,6 +12,9 @@ import (
 	"github.com/unicdev/go-shop/internal/interfaces"
 )
 
+// UploadServiceInterface is the interface for the upload service
+var _ UploadServiceInterface = (*UploadService)(nil)
+
 // UploadService is the service for the upload
 type UploadService struct {
 	provider interfaces.UploadProvider
