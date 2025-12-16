@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/services"
-	"gorm.io/gorm"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -16,7 +15,6 @@ import (
 // Server is the server for the application
 type Server struct {
 	config         *config.Config
-	db             *gorm.DB
 	logger         *zerolog.Logger
 	authService    *services.AuthService
 	productService *services.ProductService
@@ -28,7 +26,6 @@ type Server struct {
 
 // New creates a new server
 func New(cfg *config.Config,
-	db *gorm.DB,
 	logger *zerolog.Logger,
 	authService *services.AuthService,
 	productService *services.ProductService,
@@ -39,7 +36,6 @@ func New(cfg *config.Config,
 ) *Server {
 	return &Server{
 		config:         cfg,
-		db:             db,
 		logger:         logger,
 		authService:    authService,
 		productService: productService,
