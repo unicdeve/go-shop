@@ -10,10 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	defaultDateFormat = "2006-01-02T15:04:05Z"
-)
-
 // OrderService is the service for the order
 type OrderService struct {
 	db *gorm.DB
@@ -192,10 +188,15 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 					Name:        item.Product.Category.Name,
 					Description: item.Product.Category.Description,
 					IsActive:    item.Product.Category.IsActive,
+					CreatedAt:   item.Product.Category.CreatedAt,
+					UpdatedAt:   item.Product.Category.UpdatedAt,
 				},
+				CreatedAt: item.Product.CreatedAt,
+				UpdatedAt: item.Product.UpdatedAt,
 			},
-			Quantity: item.Quantity,
-			Price:    item.Price,
+			Quantity:  item.Quantity,
+			Price:     item.Price,
+			CreatedAt: item.CreatedAt,
 		}
 	}
 
@@ -205,6 +206,7 @@ func (s *OrderService) convertToOrderResponse(order *models.Order) dto.OrderResp
 		Status:      string(order.Status),
 		TotalAmount: order.TotalAmount,
 		OrderItems:  orderItems,
-		CreatedAt:   order.CreatedAt.Format(defaultDateFormat),
+		CreatedAt:   order.CreatedAt,
+		UpdatedAt:   order.UpdatedAt,
 	}
 }

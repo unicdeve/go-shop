@@ -30,6 +30,8 @@ func (s *ProductService) CreateCategory(req *dto.CreateCategoryRequest) (*dto.Ca
 		Name:        category.Name,
 		Description: category.Description,
 		IsActive:    category.IsActive,
+		CreatedAt:   category.CreatedAt,
+		UpdatedAt:   category.UpdatedAt,
 	}, nil
 
 }
@@ -47,6 +49,8 @@ func (s *ProductService) GetCategories() ([]dto.CategoryResponse, error) {
 			Name:        categories[i].Name,
 			Description: categories[i].Description,
 			IsActive:    categories[i].IsActive,
+			CreatedAt:   categories[i].CreatedAt,
+			UpdatedAt:   categories[i].UpdatedAt,
 		}
 	}
 
@@ -74,6 +78,8 @@ func (s *ProductService) UpdateCategory(id uint, req *dto.UpdateCategoryRequest)
 		Name:        category.Name,
 		Description: category.Description,
 		IsActive:    category.IsActive,
+		CreatedAt:   category.CreatedAt,
+		UpdatedAt:   category.UpdatedAt,
 	}, nil
 }
 
@@ -197,8 +203,12 @@ func (s *ProductService) convertToProductResponse(product *models.Product) dto.P
 			Name:        product.Category.Name,
 			Description: product.Category.Description,
 			IsActive:    product.Category.IsActive,
+			CreatedAt:   product.Category.CreatedAt,
+			UpdatedAt:   product.Category.UpdatedAt,
 		},
-		Images: images,
+		Images:    images,
+		CreatedAt: product.CreatedAt,
+		UpdatedAt: product.UpdatedAt,
 	}
 }
 

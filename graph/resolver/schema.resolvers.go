@@ -231,7 +231,7 @@ func (r *queryResolver) Me(ctx context.Context) (*dto.UserResponse, error) {
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context, page *int, limit *int) (*model.ProductConnection, error) {
-	p, l := getPageAndLimit(page, limit)
+	p, l := GetPageAndLimit(page, limit)
 
 	products, meta, err := r.productService.GetProducts(p, l)
 	if err != nil {
@@ -295,7 +295,7 @@ func (r *queryResolver) Cart(ctx context.Context) (*dto.CartResponse, error) {
 
 // Orders is the resolver for the orders field.
 func (r *queryResolver) Orders(ctx context.Context, page *int, limit *int) (*model.OrderConnection, error) {
-	p, l := getPageAndLimit(page, limit)
+	p, l := GetPageAndLimit(page, limit)
 
 	userID, err := GetUserIDFromContext(ctx)
 	if err != nil {
@@ -347,25 +347,3 @@ func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-func getPageAndLimit(page *int, limit *int) (int, int) {
-	var p, l = 0, 0
-
-	if page != nil {
-		p = *page
-	}
-
-	if limit != nil {
-		l = *limit
-	}
-
-	if p <= 0 {
-		p = 1
-	}
-
-	if l <= 0 {
-		l = 10
-	}
-
-	return p, l
-}
