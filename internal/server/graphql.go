@@ -14,6 +14,7 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// createGraphQLHandler creates a new graphql handler
 func (s *Server) createGraphQLHandler() *handler.Server {
 
 	rvr := resolver.NewResolver(
@@ -42,6 +43,7 @@ func (s *Server) createGraphQLHandler() *handler.Server {
 	return srv
 }
 
+// graphqlHandler is the handler for the graphql endpoint
 func (s *Server) graphqlHandler() gin.HandlerFunc {
 	h := s.createGraphQLHandler()
 
@@ -76,6 +78,7 @@ func (s *Server) playgroundProtectedHandler() gin.HandlerFunc {
 	}
 }
 
+// graphqlMiddleware is the middleware for the graphql endpoint
 func (s *Server) graphqlMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, _ := c.Get("user_id")

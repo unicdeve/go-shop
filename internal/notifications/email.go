@@ -43,7 +43,11 @@ func (e *EmailNotifier) SendSimpleEmail(email *SimpleEmail) error {
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			fmt.Printf("Failed to close connection: %v", err)
+		}
+	}()
 
 	client, err := smtp.NewClient(conn, e.config.Host)
 	if err != nil {

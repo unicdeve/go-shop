@@ -55,10 +55,20 @@ func main() {
 		log.Fatalf("Failed to create subscriber: %v", err)
 	}
 
+	// Defer cleanup at the top level - ensures cleanup on normal shutdown
+	defer func() {
+		if err := subscriber.Close(); err != nil {
+			log.Printf("Failed to close subscriber: %v", err)
+		}
+	}()
+
 	// Subscribe to messages
 	messages, err := subscriber.Subscribe(ctx, cfg.AWS.EventQueueName)
 	if err != nil {
-		subscriber.Close()
+		// Direct call (not defer) since log.Fatalf calls os.Exit which bypasses defer
+		if closeErr := subscriber.Close(); closeErr != nil {
+			log.Printf("Failed to close subscriber: %v", closeErr)
+		}
 		log.Fatalf("Failed to subscribe to queue: %v", err)
 	}
 
@@ -79,7 +89,7 @@ func main() {
 			}
 		case <-sigChan:
 			log.Println("Shutting down notification service...")
-			subscriber.Close()
+			// The top-level defer will handle cleanup
 			return
 		}
 	}

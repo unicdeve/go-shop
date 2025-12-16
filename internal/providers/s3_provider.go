@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"log"
 	"mime/multipart"
 	"strings"
 
@@ -59,7 +60,11 @@ func (p *S3Provider) UploadFile(file *multipart.FileHeader, path string) (string
 	if err != nil {
 		return "", err
 	}
-	defer src.Close()
+	defer func() {
+		if err := src.Close(); err != nil {
+			log.Printf("Failed to close source: %v", err)
+		}
+	}()
 
 	result, err := p.uploader.Upload(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(p.bucket),
