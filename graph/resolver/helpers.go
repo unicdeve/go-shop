@@ -3,19 +3,24 @@ package resolver
 import (
 	"context"
 	"errors"
+
+	"github.com/unicdev/go-shop/internal/models"
+	"github.com/unicdev/go-shop/internal/utils"
 )
 
 var (
+	// ErrUnauthorized is the error for unauthorized access
 	ErrUnauthorized = errors.New("unauthorized")
 )
 
 const (
+	// adminRole is the role for the admin
 	adminRole = "admin"
 )
 
 // GetUserIDFromContext functions to extract user info from GraphQL context
 func GetUserIDFromContext(ctx context.Context) (uint, error) {
-	userID := ctx.Value("user_id")
+	userID := ctx.Value(utils.UserIDKey)
 	if userID == nil {
 		return 0, ErrUnauthorized
 	}
@@ -29,13 +34,13 @@ func GetUserIDFromContext(ctx context.Context) (uint, error) {
 
 // GetUserRoleFromContext functions to extract user role from GraphQL context
 func GetUserRoleFromContext(ctx context.Context) (string, error) {
-	userRole := ctx.Value("user_role")
+	userRole := ctx.Value(utils.UserRoleKey)
 	if userRole == nil {
 		return "", ErrUnauthorized
 	}
 
-	if role, ok := userRole.(string); ok {
-		return role, nil
+	if role, ok := userRole.(models.UserRole); ok {
+		return string(role), nil
 	}
 
 	return "", ErrUnauthorized
@@ -51,24 +56,23 @@ func IsAdminFromContext(ctx context.Context) bool {
 	return role == adminRole
 }
 
-func GetPageAndLimit(page *int, limit *int) (int, int) {
-	var p, l = 0, 0
-
+// GetPageAndLimit functions to get the page and limit from the context
+func GetPageAndLimit(page, limit *int) (pageNum, limitNum int) {
 	if page != nil {
-		p = *page
+		pageNum = *page
 	}
 
 	if limit != nil {
-		l = *limit
+		limitNum = *limit
 	}
 
-	if p <= 0 {
-		p = 1
+	if pageNum <= 0 {
+		pageNum = 1
 	}
 
-	if l <= 0 {
-		l = 10
+	if limitNum <= 0 {
+		limitNum = 10
 	}
 
-	return p, l
+	return pageNum, limitNum
 }

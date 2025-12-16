@@ -7,14 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// ProductService is the service for the product
 type ProductService struct {
 	db *gorm.DB
 }
 
+// NewProductService creates a new product service
 func NewProductService(db *gorm.DB) *ProductService {
 	return &ProductService{db: db}
 }
 
+// CreateCategory creates a new category
 func (s *ProductService) CreateCategory(req *dto.CreateCategoryRequest) (*dto.CategoryResponse, error) {
 	category := models.Category{
 		Name:        req.Name,
@@ -36,6 +39,7 @@ func (s *ProductService) CreateCategory(req *dto.CreateCategoryRequest) (*dto.Ca
 
 }
 
+// GetCategories gets all categories
 func (s *ProductService) GetCategories() ([]dto.CategoryResponse, error) {
 	var categories []models.Category
 	if err := s.db.Where("is_active = ?", true).Find(&categories).Error; err != nil {
@@ -57,6 +61,7 @@ func (s *ProductService) GetCategories() ([]dto.CategoryResponse, error) {
 	return response, nil
 }
 
+// UpdateCategory updates a category
 func (s *ProductService) UpdateCategory(id uint, req *dto.UpdateCategoryRequest) (*dto.CategoryResponse, error) {
 	var category models.Category
 	if err := s.db.First(&category, id).Error; err != nil {
@@ -83,10 +88,12 @@ func (s *ProductService) UpdateCategory(id uint, req *dto.UpdateCategoryRequest)
 	}, nil
 }
 
+// DeleteCategory deletes a category
 func (s *ProductService) DeleteCategory(id uint) error {
 	return s.db.Delete(&models.Category{}, id).Error
 }
 
+// CreateProduct creates a new product
 func (s *ProductService) CreateProduct(req *dto.CreateProductRequest) (*dto.ProductResponse, error) {
 	product := models.Product{
 		CategoryID:  req.CategoryID,
@@ -104,6 +111,7 @@ func (s *ProductService) CreateProduct(req *dto.CreateProductRequest) (*dto.Prod
 	return s.GetProduct(product.ID)
 }
 
+// GetProducts gets all products
 func (s *ProductService) GetProducts(page, limit int) ([]dto.ProductResponse, *utils.PaginationMeta, error) {
 	if page < 1 {
 		page = 1
@@ -142,6 +150,7 @@ func (s *ProductService) GetProducts(page, limit int) ([]dto.ProductResponse, *u
 	return response, meta, nil
 }
 
+// GetProduct gets a product
 func (s *ProductService) GetProduct(id uint) (*dto.ProductResponse, error) {
 	var product models.Product
 	if err := s.db.Preload("Category").Preload("Images").First(&product, id).Error; err != nil {
@@ -152,6 +161,7 @@ func (s *ProductService) GetProduct(id uint) (*dto.ProductResponse, error) {
 	return &response, nil
 }
 
+// UpdateProduct updates a product
 func (s *ProductService) UpdateProduct(id uint, req *dto.UpdateProductRequest) (*dto.ProductResponse, error) {
 	var product models.Product
 	if err := s.db.First(&product, id).Error; err != nil {
@@ -174,10 +184,12 @@ func (s *ProductService) UpdateProduct(id uint, req *dto.UpdateProductRequest) (
 	return s.GetProduct(id)
 }
 
+// DeleteProduct deletes a product
 func (s *ProductService) DeleteProduct(id uint) error {
 	return s.db.Delete(&models.Product{}, id).Error
 }
 
+// convertToProductResponse converts a product to a product response
 func (s *ProductService) convertToProductResponse(product *models.Product) dto.ProductResponse {
 	images := make([]dto.ProductImageResponse, len(product.Images))
 	for i := range product.Images {
@@ -212,6 +224,7 @@ func (s *ProductService) convertToProductResponse(product *models.Product) dto.P
 	}
 }
 
+// AddProductImage adds a product image
 func (s *ProductService) AddProductImage(productID uint, url, altText string) error {
 
 	var count int64

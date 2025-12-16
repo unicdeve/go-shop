@@ -31,9 +31,9 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("user_id", claims.UserID)
-		c.Set("user_role", claims.Role)
-		c.Set("user_email", claims.Email)
+		c.Set(string(utils.UserIDKey), claims.UserID)
+		c.Set(string(utils.UserRoleKey), claims.Role)
+		c.Set(string(utils.UserEmailKey), claims.Email)
 		c.Next()
 	}
 }
@@ -41,7 +41,7 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 // AdminMiddleware is the middleware for the admin
 func (s *Server) adminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		role, exists := c.Get("user_role")
+		role, exists := c.Get(string(utils.UserRoleKey))
 		if !exists {
 			utils.ForbiddenResponse(c, "Forbidden")
 			c.Abort()

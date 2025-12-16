@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/unicdev/go-shop/graph"
 	"github.com/unicdev/go-shop/graph/resolver"
+	"github.com/unicdev/go-shop/internal/utils"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -81,13 +82,13 @@ func (s *Server) playgroundProtectedHandler() gin.HandlerFunc {
 // graphqlMiddleware is the middleware for the graphql endpoint
 func (s *Server) graphqlMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userID, _ := c.Get("user_id")
-		userEmail, _ := c.Get("user_email")
-		userRole, _ := c.Get("user_role")
+		userID, _ := c.Get(string(utils.UserIDKey))
+		userEmail, _ := c.Get(string(utils.UserEmailKey))
+		userRole, _ := c.Get(string(utils.UserRoleKey))
 
-		ctx := context.WithValue(c.Request.Context(), "user_id", userID)
-		ctx = context.WithValue(ctx, "user_email", userEmail)
-		ctx = context.WithValue(ctx, "user_role", userRole)
+		ctx := context.WithValue(c.Request.Context(), utils.UserIDKey, userID)
+		ctx = context.WithValue(ctx, utils.UserEmailKey, userEmail)
+		ctx = context.WithValue(ctx, utils.UserRoleKey, userRole)
 
 		c.Request = c.Request.WithContext(ctx)
 

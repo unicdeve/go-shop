@@ -55,13 +55,6 @@ func main() {
 		log.Fatalf("Failed to create subscriber: %v", err)
 	}
 
-	// Defer cleanup at the top level - ensures cleanup on normal shutdown
-	defer func() {
-		if err := subscriber.Close(); err != nil {
-			log.Printf("Failed to close subscriber: %v", err)
-		}
-	}()
-
 	// Subscribe to messages
 	messages, err := subscriber.Subscribe(ctx, cfg.AWS.EventQueueName)
 	if err != nil {
@@ -71,6 +64,13 @@ func main() {
 		}
 		log.Fatalf("Failed to subscribe to queue: %v", err)
 	}
+
+	// Defer cleanup after successful subscription - ensures cleanup on normal shutdown
+	defer func() {
+		if err := subscriber.Close(); err != nil {
+			log.Printf("Failed to close subscriber: %v", err)
+		}
+	}()
 
 	// Handle graceful shutdown
 	sigChan := make(chan os.Signal, 1)
