@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	docs "github.com/unicdev/go-shop/docs"
 	"github.com/unicdev/go-shop/internal/config"
 	"github.com/unicdev/go-shop/internal/services"
 	"gorm.io/gorm"
@@ -63,19 +62,26 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	router.GET("/health", s.healthHandler)
 
 	// Add documentation routes
-	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.StaticFile("/api-docs", "./docs/rapidoc.html")
+
+	router.Static("/uploads", "./uploads")
+
+	router.GET("/playground", s.playgroundHandler())
+
+	graphqlProtected := router.Group("/graphql")
+	graphqlProtected.Use(s.authMiddleware())
+	graphqlProtected.Use(s.graphqlMiddleware())
+	graphqlProtected.POST("/", s.graphqlHandler())
 
 	api := router.Group("/api/v1")
 	{
 		auth := api.Group("/auth")
-		{
-			authRoutes := auth
+		{ // nolint:gocritic // I need this for readability
 			auth.POST("/register", s.register)
-			authRoutes.POST("/login", s.login)
-			authRoutes.POST("/refresh-token", s.refreshToken)
-			authRoutes.POST("/logout", s.logout)
+			auth.POST("/login", s.login)
+			auth.POST("/refresh", s.refreshToken)
+			auth.POST("/logout", s.logout)
 		}
 
 		protected := api.Group("/")
