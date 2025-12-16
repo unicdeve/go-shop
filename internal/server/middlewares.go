@@ -13,13 +13,13 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			utils.UnauthorizedResponse(c, "Unauthorized")
+			utils.UnauthorizedResponse(c, "Authorization header required")
 			c.Abort()
 			return
 		}
 		tokenParts := strings.Split(authHeader, " ")
 		if len(tokenParts) != 2 {
-			utils.UnauthorizedResponse(c, "Unauthorized")
+			utils.UnauthorizedResponse(c, "Invalid authorization header format")
 			c.Abort()
 			return
 		}
@@ -27,7 +27,7 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 		token := tokenParts[1]
 		claims, err := utils.ValidateToken(token, s.config.JWT.Secret)
 		if err != nil {
-			utils.UnauthorizedResponse(c, "Unauthorized")
+			utils.UnauthorizedResponse(c, "Invalid token")
 			c.Abort()
 			return
 		}
