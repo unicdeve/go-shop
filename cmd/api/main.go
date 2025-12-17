@@ -15,6 +15,7 @@ import (
 	"github.com/unicdev/go-shop/internal/interfaces"
 	"github.com/unicdev/go-shop/internal/logger"
 	"github.com/unicdev/go-shop/internal/providers"
+	"github.com/unicdev/go-shop/internal/repositories"
 	"github.com/unicdev/go-shop/internal/server"
 	"github.com/unicdev/go-shop/internal/services"
 )
@@ -71,7 +72,10 @@ func main() {
 		return
 	}
 
-	authService := services.NewAuthService(db, cfg, eventPublisher)
+	userRepo := repositories.NewUserRepository(db)
+	cartRepo := repositories.NewCartRepository(db)
+
+	authService := services.NewAuthService(cfg, userRepo, cartRepo, eventPublisher)
 	productService := services.NewProductService(db)
 	userService := services.NewUserService(db)
 

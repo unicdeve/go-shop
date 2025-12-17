@@ -20,9 +20,13 @@ func NewCartRepository(db *gorm.DB) *CartRepository {
 // GetByUserID gets a cart by user id
 func (r *CartRepository) GetByUserID(userID uint) (*models.Cart, error) {
 	var cart models.Cart
-	if err := r.db.Where("user_id = ?", userID).First(&cart).Error; err != nil {
+	err := r.db.Preload("CartItems.Product.Category").
+		Where("user_id = ?", userID).First(&cart).Error
+
+	if err != nil {
 		return nil, err
 	}
+
 	return &cart, nil
 }
 
